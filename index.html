@@ -1,1271 +1,464 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>講章準備檢核表</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>講道準備工作站 - 專業版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #f8f9fa;
-            --dark-color: #2c3e50;
-            --border-color: #ddd;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
-            --border-radius: 8px;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; scroll-behavior: smooth; }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-            padding: 15px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            text-align: center;
-            padding: 20px 15px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1a2530 100%);
-            color: white;
-            border-radius: var(--border-radius);
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-        }
-        
-        .header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            line-height: 1.3;
-        }
-        
-        .scripture {
-            font-style: italic;
-            color: #f1c40f;
-            margin: 10px 0;
-            font-size: 0.95rem;
-        }
-        
-        .info-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--primary-color);
-        }
-        
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border 0.3s;
-        }
-        
-        .form-group input:focus, .form-group textarea:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-        }
-        
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        
-        .phase-container {
-            margin-bottom: 20px;
-        }
-        
-        .phase-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 16px 20px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s;
-            box-shadow: var(--shadow);
-            position: relative;
-            user-select: none;
-        }
-        
-        .phase-header:hover {
-            background-color: #34495e;
-        }
-        
-        .phase-header h2 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin: 0;
-        }
-        
-        .phase-header .toggle-icon {
-            transition: transform 0.3s;
-        }
-        
-        .phase-header.active .toggle-icon {
-            transform: rotate(180deg);
-        }
-        
-        .phase-content {
-            background-color: white;
-            padding: 0;
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
-            overflow: hidden;
+        .note-area {
+            transition: all 0.3s ease-in-out;
             max-height: 0;
-            transition: max-height 0.5s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        
-        .phase-content.active {
-            max-height: 5000px;
-            padding: 20px;
-        }
-        
-        .check-item {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .check-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
-        .check-question {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--dark-color);
-            line-height: 1.5;
-            font-size: 1.05rem;
-        }
-        
-        .check-question .verse {
-            color: var(--accent-color);
-            font-size: 0.9rem;
-            font-weight: normal;
-            font-style: italic;
-            display: inline-block;
-            margin-left: 5px;
-        }
-        
-        .notes-area {
-            width: 100%;
-            min-height: 100px;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border 0.3s;
-            background-color: #f9f9f9;
-        }
-        
-        .notes-area:focus {
-            border-color: var(--secondary-color);
-            outline: none;
-            background-color: white;
-        }
-        
-        .prayer-section {
-            background-color: #e8f4fc;
-            padding: 25px;
-            border-radius: var(--border-radius);
-            margin-top: 30px;
-            box-shadow: var(--shadow);
-            border-left: 5px solid var(--secondary-color);
-        }
-        
-        .prayer-section h3 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 1.4rem;
-            text-align: center;
-        }
-        
-        .prayer-text {
-            font-style: italic;
-            line-height: 1.7;
-            color: #2c3e50;
-            background-color: rgba(255,255,255,0.7);
-            padding: 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-        }
-        
-        .prayer-checkbox-section {
-            background-color: white;
-            padding: 20px;
-            border-radius: 6px;
-            margin-top: 20px;
-        }
-        
-        .prayer-checkbox-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 15px;
-            padding: 12px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .prayer-checkbox-item:nth-child(odd) {
-            border-left-color: #2ecc71;
-        }
-        
-        .prayer-checkbox-item:nth-child(even) {
-            border-left-color: #9b59b6;
-        }
-        
-        .prayer-checkbox-item input[type="checkbox"] {
-            margin-right: 12px;
-            margin-top: 4px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-        
-        .prayer-checkbox-label {
-            flex: 1;
-            font-weight: 500;
-            line-height: 1.5;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            border-top: 1px solid #eee;
-        }
-        
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .save-btn {
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 1;
-            min-width: 200px;
-            transition: background-color 0.3s;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .save-btn:hover {
-            background-color: #219653;
-        }
-        
-        .export-btn {
-            background-color: #2980b9;
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 1;
-            min-width: 200px;
-            transition: background-color 0.3s;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .export-btn:hover {
-            background-color: #1c6ea4;
-        }
-        
-        .reset-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: var(--border-radius);
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: inline-block;
-            margin-top: 10px;
-            transition: background-color 0.3s;
-        }
-        
-        .reset-btn:hover {
-            background-color: #c0392b;
-        }
-        
-        .completion-status {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            text-align: right;
-            margin-bottom: 10px;
-        }
-        
-        .save-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #27ae60;
-            color: white;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
             opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            overflow: hidden;
         }
-        
-        .save-notification.show {
+        .note-area.active {
+            max-height: 800px;
             opacity: 1;
+            margin-top: 1rem;
         }
         
-        .auto-save-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: rgba(52, 152, 219, 0.9);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            display: none;
-            align-items: center;
-            gap: 8px;
-            z-index: 1000;
+        .checkbox-custom:checked + label {
+            text-decoration: line-through;
+            color: #94a3b8;
         }
-        
-        .auto-save-indicator.show {
-            display: flex;
-            animation: pulse 2s infinite;
+
+        .sidebar-item.active {
+            background-color: #f1f5f9;
+            border-left: 4px solid #4f46e5;
         }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+
+        /* 側邊欄過渡 */
+        #sidebar {
+            transition: width 0.3s ease-in-out, opacity 0.2s;
+            width: 256px; /* 64 * 4px */
         }
-        
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            
-            .header h1 {
-                font-size: 1.5rem;
-            }
-            
-            .phase-header h2 {
-                font-size: 1.2rem;
-            }
-            
-            .check-question {
-                font-size: 1rem;
-            }
-            
-            .prayer-section {
-                padding: 20px 15px;
-            }
-            
-            .button-container {
-                flex-direction: column;
-            }
-            
-            .save-btn, .export-btn {
-                width: 100%;
-                min-width: unset;
-            }
+        .sidebar-collapsed {
+            width: 0 !important;
+            opacity: 0;
+            overflow: hidden;
+            border-right: none !important;
         }
-        
-        /* 打印樣式 */
-        @media print {
-            .phase-header {
-                background-color: #f1f1f1 !important;
-                color: black !important;
-                border: 1px solid #ccc;
-            }
-            
-            .phase-content {
-                max-height: none !important;
-                display: block !important;
-                padding: 20px !important;
-            }
-            
-            .save-btn, .export-btn, .reset-btn, .footer, .auto-save-indicator, .save-notification {
-                display: none;
-            }
+
+        /* 語音動畫 */
+        @keyframes pulse-red {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
+        .recording { animation: pulse-red 1.5s infinite; color: #ef4444 !important; }
     </style>
 </head>
-<body>
-    <div class="header">
-        <h1>講章準備檢核表</h1>
-        <div class="scripture">「按著正意分解真理的道」（提後2:15）</div>
-    </div>
-    
-    <div class="info-section">
-        <div class="form-group">
-            <label for="sermonTopic">講道主題/經文：</label>
-            <input type="text" id="sermonTopic" placeholder="例如：從浪子回頭看神的恩典（路15:11-32）">
-        </div>
-        <div class="form-group">
-            <label for="targetAudience">目標會眾：</label>
-            <input type="text" id="targetAudience" placeholder="主日會眾" value="主日會眾">
-        </div>
-        <div class="form-group">
-            <label for="coreTruth">核心真理（一段話）：</label>
-            <textarea id="coreTruth" placeholder="例如：神就像故事中的父親，時刻等待我們回轉。無論我們曾經遠離祂多遠，只要願意回頭，祂都張開雙臂迎接，用無條件的愛恢復我們兒女的身份。"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="preacherName">講員姓名：</label>
-            <input type="text" id="preacherName" placeholder="請填寫講員姓名">
-        </div>
-        <div class="form-group">
-            <label for="sermonDate">講道日期：</label>
-            <input type="date" id="sermonDate">
-        </div>
-    </div>
-    
-    <div class="completion-status" id="completionStatus">完成度：0%</div>
-    
-    <div id="checklist-container">
-        <!-- 第一階段 -->
-        <div class="phase-container">
-            <div class="phase-header" data-phase="1">
-                <h2><i class="fas fa-book"></i> 第一階段：扎根聖道——以經解經的嚴謹功夫</h2>
-                <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="phase-content" id="phase-1">
-                <div class="check-item">
-                    <div class="check-question">1. 上下文檢視：我是否仔細研讀了這段經文的文學上下文（章節脈絡）與歷史文化背景？它如何融入全書主題？</div>
-                    <textarea class="notes-area" placeholder="在此記錄你的研讀筆記..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">2. 以經解經：針對關鍵詞或概念，我是否使用了其他經文來解釋，而非僅靠個人見解？</div>
-                    <textarea class="notes-area" placeholder="記錄你找到的相關經文及其解釋..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">3. 基督中心：這段經文如何指向或見證基督？與福音的核心有何關聯？<span class="verse">（路24:27）</span></div>
-                    <textarea class="notes-area" placeholder="思考經文與基督的關聯..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">4. 核心教義提煉：這段經文清晰傳達的一個主要真理是什麼？它屬於哪個基本教義範疇？</div>
-                    <textarea class="notes-area" placeholder="提煉核心真理與所屬教義範疇..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">5. 生活處境辨認：經文揭示的人性光景、需要或問題，與當代會眾的生命處境有何共通之處？</div>
-                    <textarea class="notes-area" placeholder="辨認當代生活處境與經文的關聯..."></textarea>
-                </div>
-            </div>
+<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
+
+    <!-- 1. 側邊導航欄 (預設收起狀態) -->
+    <aside id="sidebar" class="bg-white border-r border-slate-200 flex flex-col hidden md:flex relative z-10 sidebar-collapsed">
+        <div class="p-6 border-b border-slate-50 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
+                <i data-lucide="layout"></i> 工作站
+            </h2>
         </div>
         
-        <!-- 第二階段 -->
-        <div class="phase-container">
-            <div class="phase-header" data-phase="2">
-                <h2><i class="fas fa-brain"></i> 第二階段：建造階梯——聽眾心智的認知設計</h2>
-                <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="phase-content" id="phase-2">
-                <div class="check-item">
-                    <div class="check-question">6. 開場：從「他們的世界」開始：我的開場是否從一個會眾共鳴的故事、文化現象或普遍困惑切入？</div>
-                    <textarea class="notes-area" placeholder="構思你的開場方式..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">7. 結構組塊化（3點為宜）：我將信息分成幾個清晰、易記的模組？</div>
-                    <textarea class="notes-area" placeholder="列出你的講道結構（建議3點）..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">8. 漸進式啟示：每個部分是否遵循「展示經文 → 解釋真意 → 今日應用」的邏輯？</div>
-                    <textarea class="notes-area" placeholder="規劃每個部分的進展邏輯..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">9. 認知休息點：我是否在每部分之間，設計了見證故事、簡短影音或反思問題？</div>
-                    <textarea class="notes-area" placeholder="設計認知休息點..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">10. 強力結尾：呼召與應許：我的結尾是否清晰呼召會眾作出具體回應，並指向神的應許與恩典？</div>
-                    <textarea class="notes-area" placeholder="設計結尾的呼召與應許..."></textarea>
-                </div>
-            </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-2" id="session-list">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">歷史存檔</div>
         </div>
-        
-        <!-- 第三階段 -->
-        <div class="phase-container">
-            <div class="phase-header" data-phase="3">
-                <h2><i class="fas fa-heart"></i> 第三階段：點燃心靈——多感官與情感的觸動</h2>
-                <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="phase-content" id="phase-3">
-                <div class="check-item">
-                    <div class="check-question">11. 聖經比喻現代化：我是否找到一個當代類比，來闡明經文中的古老比喻或概念？</div>
-                    <textarea class="notes-area" placeholder="構思當代類比或比喻..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">12. 視覺與多媒體：我使用的視覺輔助是否能強化真理印象，而非分散注意力？</div>
-                    <textarea class="notes-area" placeholder="規劃視覺與多媒體輔助..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">13. 互動與體驗設計：我是否設計了簡單的會眾參與方式？</div>
-                    <textarea class="notes-area" placeholder="設計互動環節..."></textarea>
-                </div>
-                <div class="check-item">
-                    <div class="check-question">14. 情感真實性：我分享的見證或應用，是否發自內心，並能真誠地傳遞對神恩典的敬畏、喜樂或盼望？</div>
-                    <textarea class="notes-area" placeholder="反思並預備真誠的情感表達..."></textarea>
-                </div>
-            </div>
+
+        <div class="p-4 border-t border-slate-100 space-y-2">
+            <button onclick="createNewSession()" class="w-full flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-2 rounded-lg font-medium transition-colors">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> 新講道計畫
+            </button>
+            <button onclick="clearAllSessions()" class="w-full flex items-center justify-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-600 py-2 rounded-lg font-medium transition-colors text-sm">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> 全部清除
+            </button>
         </div>
-    </div>
-    
-    <div class="prayer-section">
-        <h3>最後的禱告檢視</h3>
-        <div class="prayer-text">
-            「主啊，這篇道：<br><br>
-            - 是否<strong>忠於你的話語</strong>？（第一階段）<br>
-            - 是否<strong>顧念羊群的需要與理解</strong>？（第二、三階段）<br>
-            - 是否<strong>倚靠並榮耀你的靈</strong>？（禱告檢視）<br><br>
-            願我不是單傳遞知識，而是<strong>見證你的生命</strong>；不只建造頭腦，更是<strong>觸動心靈，喚醒意志</strong>。奉主耶穌的名求，阿們。」
-        </div>
-        
-        <div class="prayer-checkbox-section">
-            <div class="prayer-checkbox-item">
-                <input type="checkbox" id="prayer-check1" class="prayer-checkbox">
-                <label for="prayer-check1" class="prayer-checkbox-label">信息已內化：這篇道先對我自己說話，能自然講述核心內容</label>
-            </div>
-            
-            <div class="prayer-checkbox-item">
-                <input type="checkbox" id="prayer-check2" class="prayer-checkbox">
-                <label for="prayer-check2" class="prayer-checkbox-label">已為會眾提名禱告：為會眾具體需要和反應禱告</label>
-            </div>
-            
-            <div class="prayer-checkbox-item">
-                <input type="checkbox" id="prayer-check3" class="prayer-checkbox">
-                <label for="prayer-check3" class="prayer-checkbox-label">恩典導向：強調「神為你成就」而非「你當做什麼」</label>
-            </div>
-            
-            <div class="prayer-checkbox-item">
-                <input type="checkbox" id="prayer-check4" class="prayer-checkbox">
-                <label for="prayer-check4" class="prayer-checkbox-label">預留聖靈空間：讓聖靈在現場自由運行與引導</label>
-            </div>
-        </div>
-    </div>
-    
-    <div class="button-container">
-        <button class="save-btn" id="saveButton">
-            <i class="fas fa-save"></i> 保存到瀏覽器
+    </aside>
+
+    <!-- 主內容區 -->
+    <main class="flex-1 overflow-y-auto relative">
+        <!-- 側邊欄切換按鈕 -->
+        <button onclick="toggleSidebar()" class="fixed left-4 top-4 z-20 p-2 bg-white rounded-full shadow-lg border border-slate-200 text-slate-500 hover:text-indigo-600 transition-all">
+            <i data-lucide="menu" id="sidebar-icon"></i>
         </button>
-        <button class="export-btn" id="exportButton">
-            <i class="fas fa-file-word"></i> 匯出Word文件
-        </button>
-    </div>
-    
-    <button class="reset-btn" id="resetButton">
-        <i class="fas fa-redo"></i> 重置所有內容
-    </button>
-    
-    <!-- 自動保存指示器 -->
-    <div class="auto-save-indicator" id="autoSaveIndicator">
-        <i class="fas fa-sync-alt fa-spin"></i>
-        <span>自動保存中...</span>
-    </div>
-    
-    <!-- 保存通知 -->
-    <div class="save-notification" id="saveNotification">
-        <i class="fas fa-check-circle"></i>
-        <span>內容已保存！</span>
-    </div>
-    
-    <div class="footer">
-        <p>講章準備檢核表<br>
-        祝你傳講得力，見證主道的大能！</p>
+
+        <div class="max-w-4xl mx-auto p-6 md:p-12">
+            <!-- 標題與主題 -->
+            <header class="mb-10 text-center md:text-left">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <h1 class="text-3xl font-bold ml-0 md:ml-12">講道準備檢核</h1>
+                    <div class="flex gap-3">
+                        <button onclick="resetCurrentForm()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-all border border-transparent hover:border-rose-100">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> 重置目前表單
+                        </button>
+                        <button onclick="copyNotesOnly()" class="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg font-medium hover:bg-indigo-100 transition-all" title="只複製筆記內容">
+                            <i data-lucide="copy" class="w-4 h-4"></i> 複製筆記
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
+                    <!-- 更新：標籤名稱與 Placeholder -->
+                    <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">主題和經文</label>
+                    <input type="text" id="sermon-topic" oninput="updateCurrentSessionTitle()" placeholder="輸入本次講道的主題與經文..." 
+                        class="w-full bg-transparent text-2xl font-bold outline-none border-none placeholder:text-slate-300">
+                </div>
+            </header>
+
+            <!-- 檢核階段 -->
+            <div class="space-y-6">
+                <!-- Step 1 -->
+                <section class="stage-container">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-blue-100 transition-all">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                            <div class="p-3 rounded-xl bg-blue-500 text-white shadow-md">
+                                <i data-lucide="book-open" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Step 1: 準備</span>
+                                <h2 class="text-xl font-bold text-blue-600">經文查考</h2>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="toggleNote(1)" class="p-2 hover:bg-slate-50 rounded-lg text-slate-400"><i data-lucide="message-square"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-2" id="checklist-1"></div>
+                        <div id="note-1" class="note-area active"> 
+                            <div class="relative">
+                                <textarea id="note-text-1" oninput="saveAllData()" placeholder="第一階段靈感筆記..." class="w-full p-4 rounded-xl border border-blue-50 bg-blue-50/30 focus:bg-white focus:ring-2 focus:ring-blue-400 outline-none h-40 transition-all"></textarea>
+                                <button onclick="startVoice(1)" class="absolute bottom-4 right-4 p-2 bg-white rounded-full shadow-md text-slate-400 hover:text-red-500 transition-all">
+                                    <i data-lucide="mic" id="mic-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 2 -->
+                <section class="stage-container">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 transition-all">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                            <div class="p-3 rounded-xl bg-emerald-500 text-white shadow-md">
+                                <i data-lucide="brain" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Step 2: 正文</span>
+                                <h2 class="text-xl font-bold text-emerald-600">認知設計</h2>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="toggleNote(2)" class="p-2 hover:bg-slate-50 rounded-lg text-slate-400"><i data-lucide="message-square"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="checklist-2"></div>
+                        <div id="note-2" class="note-area active">
+                            <div class="relative">
+                                <textarea id="note-text-2" oninput="saveAllData()" placeholder="第二階段邏輯筆記..." class="w-full p-4 rounded-xl border border-emerald-50 bg-emerald-50/30 focus:bg-white focus:ring-2 focus:ring-emerald-400 outline-none h-40 transition-all"></textarea>
+                                <button onclick="startVoice(2)" class="absolute bottom-4 right-4 p-2 bg-white rounded-full shadow-md text-slate-400 hover:text-red-500 transition-all">
+                                    <i data-lucide="mic" id="mic-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 3 -->
+                <section class="stage-container">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-rose-100 transition-all">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                            <div class="p-3 rounded-xl bg-rose-500 text-white shadow-md">
+                                <i data-lucide="heart" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Step 3: 潤飾</span>
+                                <h2 class="text-xl font-bold text-rose-600">感官與情感</h2>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="toggleNote(3)" class="p-2 hover:bg-slate-50 rounded-lg text-slate-400"><i data-lucide="message-square"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="checklist-3"></div>
+                        <div id="note-3" class="note-area active">
+                            <div class="relative">
+                                <textarea id="note-text-3" oninput="saveAllData()" placeholder="第三階段情感筆記..." class="w-full p-4 rounded-xl border border-rose-50 bg-rose-50/30 focus:bg-white focus:ring-2 focus:ring-rose-400 outline-none h-40 transition-all"></textarea>
+                                <button onclick="startVoice(3)" class="absolute bottom-4 right-4 p-2 bg-white rounded-full shadow-md text-slate-400 hover:text-red-500 transition-all">
+                                    <i data-lucide="mic" id="mic-3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 操作區 -->
+            <div class="mt-12 flex flex-col sm:flex-row justify-center gap-4 pb-20">
+                <button onclick="saveAllData()" class="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold shadow-xl transition-all active:scale-95">
+                    <i data-lucide="save"></i> 儲存計畫
+                </button>
+                <button onclick="exportToWord()" class="flex items-center justify-center gap-2 bg-white border border-slate-200 hover:border-indigo-600 hover:text-indigo-600 px-8 py-4 rounded-2xl font-bold shadow-sm transition-all active:scale-95">
+                    <i data-lucide="file-text"></i> 輸出 Word (.doc)
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 提示彈窗 -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-3 rounded-2xl shadow-2xl opacity-0 transition-all pointer-events-none transform translate-y-4">
+        已完成操作
     </div>
 
     <script>
-        // DOM加載完成後初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化事件監聽器
-            initEventListeners();
-            
-            // 載入保存的數據
-            loadSavedData();
-            
-            // 更新完成度
-            updateCompletionStatus();
-            
-            // 顯示載入完成提示
-            setTimeout(() => {
-                showNotification('已載入上次保存的內容', 'info');
-            }, 500);
-            
-            // 設置講道日期為今天
-            const today = new Date();
-            const todayFormatted = today.toISOString().split('T')[0];
-            document.getElementById('sermonDate').value = todayFormatted;
-            
-            // 設置目標會眾為「主日會眾」
-            document.getElementById('targetAudience').value = "主日會眾";
-        });
-        
-        // 初始化所有事件監聽器
-        function initEventListeners() {
-            // 階段展開/收起事件
-            const phaseHeaders = document.querySelectorAll('.phase-header');
-            phaseHeaders.forEach(header => {
-                header.addEventListener('click', function() {
-                    const phaseNum = this.getAttribute('data-phase');
-                    togglePhase(phaseNum);
-                });
-            });
-            
-            // 保存按鈕事件
-            document.getElementById('saveButton').addEventListener('click', saveAllData);
-            
-            // 匯出按鈕事件
-            document.getElementById('exportButton').addEventListener('click', exportToWord);
-            
-            // 重置按鈕事件
-            document.getElementById('resetButton').addEventListener('click', resetAllData);
-            
-            // 輸入事件 - 更新完成度
-            const inputElements = document.querySelectorAll('input, textarea');
-            inputElements.forEach(element => {
-                element.addEventListener('input', updateCompletionStatus);
-                element.addEventListener('input', autoSaveData);
-            });
-            
-            // checkbox事件 - 更新完成度
-            const checkboxes = document.querySelectorAll('.prayer-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', updateCompletionStatus);
-                checkbox.addEventListener('change', autoSaveData);
-            });
-        }
-        
-        // 展開/收起階段內容
-        function togglePhase(phaseNumber) {
-            const header = document.querySelector(`.phase-header[data-phase="${phaseNumber}"]`);
-            const content = document.getElementById(`phase-${phaseNumber}`);
-            const icon = header.querySelector('.toggle-icon');
-            
-            // 切換active類
-            header.classList.toggle('active');
-            content.classList.toggle('active');
-            
-            // 如果內容是展開狀態，滾動到該區域
-            if (content.classList.contains('active')) {
-                setTimeout(() => {
-                    content.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-            }
-        }
-        
-        // 更新完成度狀態
-        function updateCompletionStatus() {
-            // 計算筆記區域
-            const textareas = document.querySelectorAll('.notes-area');
-            let filledCount = 0;
-            
-            // 檢查所有筆記區域
-            textareas.forEach(textarea => {
-                if (textarea.value.trim().length > 0) {
-                    filledCount++;
-                }
-            });
-            
-            // 計算禱告checkbox區域
-            const checkboxes = document.querySelectorAll('.prayer-checkbox');
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    filledCount++;
-                }
-            });
-            
-            // 計算基本信息
-            const infoInputs = document.querySelectorAll('#sermonTopic, #targetAudience, #coreTruth, #preacherName, #sermonDate');
-            infoInputs.forEach(input => {
-                if (input.value && input.value.trim().length > 0) {
-                    filledCount++;
-                }
-            });
-            
-            // 計算總項目數
-            const totalCount = textareas.length + checkboxes.length + infoInputs.length;
-            
-            // 計算百分比
-            const percentage = Math.round((filledCount / totalCount) * 100);
-            
-            // 更新顯示
-            document.getElementById('completionStatus').textContent = `完成度：${percentage}%`;
-            
-            // 根據完成度改變顏色
-            const statusElement = document.getElementById('completionStatus');
-            if (percentage < 30) {
-                statusElement.style.color = '#e74c3c';
-            } else if (percentage < 70) {
-                statusElement.style.color = '#f39c12';
+        const checklistItems = {
+            1: ["上下文檢視", "以經解經", "基督中心", "核心教義", "生活處境"],
+            2: ["引入", "結構組塊", "漸進啟發", "認知休息點", "生活實踐"],
+            3: ["比喻現代化", "視覺與多媒體", "互動與體驗", "情感真實性"]
+        };
+
+        let sessions = JSON.parse(localStorage.getItem('sermonSessions')) || [];
+        let currentSessionId = localStorage.getItem('currentSessionId') || null;
+
+        window.onload = () => {
+            renderChecklists();
+            if (sessions.length === 0) {
+                createNewSession();
             } else {
-                statusElement.style.color = '#27ae60';
+                renderSessionList();
+                loadSession(currentSessionId || sessions[0].id);
             }
+            lucide.createIcons();
+        };
+
+        function renderChecklists() {
+            [1, 2, 3].forEach(step => {
+                const container = document.getElementById(`checklist-${step}`);
+                container.innerHTML = checklistItems[step].map((item, idx) => `
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors">
+                        <input type="checkbox" id="check-${step}-${idx}" class="checkbox-custom w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" onchange="saveAllData()">
+                        <label for="check-${step}-${idx}" class="text-sm font-medium cursor-pointer">${item}</label>
+                    </div>
+                `).join('');
+            });
         }
-        
-        // 保存所有數據到本地存儲
-        function saveAllData() {
-            const data = collectFormData();
+
+        // 側邊欄切換：優化圖示與動畫邏輯
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('sidebar-icon');
+            sidebar.classList.toggle('sidebar-collapsed');
             
-            // 保存到本地存儲
-            localStorage.setItem('sermonChecklistData', JSON.stringify(data));
-            
-            // 顯示保存成功提示
-            showNotification('內容已保存到瀏覽器！', 'success');
+            // 如果收起，顯示 menu；如果展開，顯示 x
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            icon.setAttribute('data-lucide', isCollapsed ? 'menu' : 'x');
+            lucide.createIcons();
         }
-        
-        // 自動保存數據
-        let autoSaveTimeout;
-        function autoSaveData() {
-            // 清除之前的計時器
-            clearTimeout(autoSaveTimeout);
-            
-            // 顯示自動保存指示器
-            const indicator = document.getElementById('autoSaveIndicator');
-            indicator.classList.add('show');
-            
-            // 設置新的計時器
-            autoSaveTimeout = setTimeout(() => {
-                const data = collectFormData();
-                localStorage.setItem('sermonChecklistData', JSON.stringify(data));
-                
-                // 隱藏指示器
-                indicator.classList.remove('show');
-            }, 2000); // 2秒後自動保存
-        }
-        
-        // 收集表單數據
-        function collectFormData() {
-            const data = {
-                sermonTopic: document.getElementById('sermonTopic').value,
-                targetAudience: document.getElementById('targetAudience').value,
-                coreTruth: document.getElementById('coreTruth').value,
-                preacherName: document.getElementById('preacherName').value,
-                sermonDate: document.getElementById('sermonDate').value,
-                notes: [],
-                prayerChecks: {
-                    check1: document.getElementById('prayer-check1').checked,
-                    check2: document.getElementById('prayer-check2').checked,
-                    check3: document.getElementById('prayer-check3').checked,
-                    check4: document.getElementById('prayer-check4').checked
-                }
+
+        function createNewSession() {
+            const id = 'session_' + Date.now();
+            const newSession = {
+                id: id,
+                title: "未命名講道",
+                topic: "",
+                checks: {},
+                note1: "", note2: "", note3: ""
             };
-            
-            // 收集所有筆記（第一、二、三階段）
-            const noteTextareas = document.querySelectorAll('.notes-area');
-            noteTextareas.forEach((textarea, index) => {
-                data.notes.push({
-                    id: index + 1,
-                    value: textarea.value
-                });
-            });
-            
-            return data;
+            sessions.unshift(newSession);
+            currentSessionId = id;
+            saveSessions();
+            renderSessionList();
+            loadSession(id);
         }
-        
-        // 顯示通知
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('saveNotification');
-            notification.querySelector('span').textContent = message;
-            
-            // 根據類型設置顏色
-            if (type === 'success') {
-                notification.style.backgroundColor = '#27ae60';
-            } else if (type === 'info') {
-                notification.style.backgroundColor = '#3498db';
-            } else if (type === 'warning') {
-                notification.style.backgroundColor = '#f39c12';
-            }
-            
-            // 顯示通知
-            notification.classList.add('show');
-            
-            // 3秒後自動隱藏
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // 匯出為Word文件（簡潔設計編排）
-        function exportToWord() {
-            // 收集所有數據
-            const data = collectFormData();
-            
-            // 構建Word文檔內容（簡潔設計編排）
-            let wordContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>講章準備檢核表 - ${data.sermonTopic || '未命名'}</title>
-                <style>
-                    @page {
-                        size: A4;
-                        margin: 1.5cm;
-                    }
-                    
-                    body {
-                        font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
-                        line-height: 1.5;
-                        margin: 0;
-                        padding: 0;
-                        color: #333;
-                    }
-                    
-                    .header-section {
-                        width: 100%;
-                        background-color: #2c3e50;
-                        color: white;
-                        padding: 15px;
-                        text-align: center;
-                        margin-bottom: 25px;
-                        border-radius: 5px;
-                    }
-                    
-                    .header-section h1 {
-                        margin: 0 0 8px 0;
-                        font-size: 22px;
-                    }
-                    
-                    .header-section p {
-                        margin: 0;
-                        font-style: italic;
-                        color: #f1c40f;
-                    }
-                    
-                    .info-section {
-                        width: 100%;
-                        background-color: #f8f9fa;
-                        padding: 15px;
-                        margin-bottom: 20px;
-                        border: 1px solid #ddd;
-                        border-radius: 5px;
-                        display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                        gap: 10px;
-                    }
-                    
-                    .info-item {
-                        margin: 0;
-                    }
-                    
-                    .info-item strong {
-                        color: #2c3e50;
-                        display: block;
-                        margin-bottom: 3px;
-                        font-size: 14px;
-                    }
-                    
-                    .info-item span {
-                        display: block;
-                        font-size: 14px;
-                    }
-                    
-                    .phase-title {
-                        background-color: #2c3e50;
-                        color: white;
-                        padding: 10px 15px;
-                        font-weight: bold;
-                        margin: 20px 0 10px 0;
-                        border-radius: 3px;
-                        page-break-inside: avoid;
-                        font-size: 16px;
-                    }
-                    
-                    .question-block {
-                        margin-bottom: 15px;
-                        page-break-inside: avoid;
-                    }
-                    
-                    .question-number {
-                        font-weight: bold;
-                        color: #e74c3c;
-                        margin-right: 5px;
-                    }
-                    
-                    .question-text {
-                        font-weight: bold;
-                        color: #2c3e50;
-                        margin-bottom: 5px;
-                        font-size: 14px;
-                    }
-                    
-                    .answer-area {
-                        min-height: 50px;
-                        border-bottom: 1px dashed #ccc;
-                        margin-top: 8px;
-                        padding-bottom: 8px;
-                        font-size: 13px;
-                    }
-                    
-                    .prayer-section {
-                        width: 100%;
-                        background-color: #e8f4fc;
-                        padding: 20px;
-                        margin-top: 30px;
-                        border-left: 5px solid #3498db;
-                        page-break-before: auto;
-                    }
-                    
-                    .prayer-section h3 {
-                        color: #2c3e50;
-                        margin-top: 0;
-                        text-align: center;
-                        font-size: 18px;
-                    }
-                    
-                    .prayer-text {
-                        font-style: italic;
-                        line-height: 1.6;
-                        color: #2c3e50;
-                        background-color: rgba(255,255,255,0.7);
-                        padding: 15px;
-                        border-radius: 5px;
-                        margin-bottom: 15px;
-                        font-size: 14px;
-                    }
-                    
-                    .prayer-checkbox-section {
-                        background-color: white;
-                        padding: 15px;
-                        border-radius: 5px;
-                        margin-top: 15px;
-                    }
-                    
-                    .prayer-checkbox-item {
-                        margin-bottom: 10px;
-                        padding-left: 25px;
-                        position: relative;
-                        font-size: 13px;
-                    }
-                    
-                    .prayer-checkbox-item:before {
-                        content: "□";
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        font-size: 16px;
-                    }
-                    
-                    .prayer-checkbox-item.checked:before {
-                        content: "✓";
-                        font-weight: bold;
-                    }
-                    
-                    .footer {
-                        width: 100%;
-                        text-align: center;
-                        margin-top: 30px;
-                        color: #7f8c8d;
-                        font-size: 12px;
-                        border-top: 1px solid #eee;
-                        padding-top: 15px;
-                    }
-                    
-                    .print-date {
-                        font-size: 11px;
-                        color: #95a5a6;
-                        text-align: right;
-                        margin-bottom: 10px;
-                    }
-                    
-                    /* 列印樣式 */
-                    @media print {
-                        .header-section {
-                            background-color: #2c3e50 !important;
-                            -webkit-print-color-adjust: exact;
-                            print-color-adjust: exact;
-                        }
-                        
-                        .phase-title {
-                            background-color: #2c3e50 !important;
-                            -webkit-print-color-adjust: exact;
-                            print-color-adjust: exact;
-                        }
-                        
-                        .question-block {
-                            page-break-inside: avoid;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="header-section">
-                    <h1>講章準備檢核表</h1>
-                    <p>「按著正意分解真理的道」（提後2:15）</p>
-                </div>
-                
-                <div class="print-date">列印時間：${new Date().toLocaleString('zh-TW')}</div>
-                
-                <div class="info-section">
-                    <div class="info-item"><strong>講道主題/經文：</strong> <span>${data.sermonTopic || '未填寫'}</span></div>
-                    <div class="info-item"><strong>講員姓名：</strong> <span>${data.preacherName || '未填寫'}</span></div>
-                    <div class="info-item"><strong>講道日期：</strong> <span>${data.sermonDate || '未填寫'}</span></div>
-                    <div class="info-item"><strong>目標會眾：</strong> <span>${data.targetAudience || '主日會眾'}</span></div>
-                </div>
-                
-                <div class="info-item" style="grid-column: 1 / -1; margin-top: 10px;">
-                    <strong>核心真理（一段話）：</strong>
-                    <span>${data.coreTruth || '未填寫'}</span>
-                </div>`;
-            
-            // 定義階段標題
-            const phaseTitles = [
-                "第一階段：扎根聖道——以經解經的嚴謹功夫",
-                "第二階段：建造階梯——聽眾心智的認知設計", 
-                "第三階段：點燃心靈——多感官與情感的觸動"
-            ];
-            
-            // 定義問題文本
-            const questions = [
-                "上下文檢視：我是否仔細研讀了這段經文的文學上下文（章節脈絡）與歷史文化背景？它如何融入全書主題？",
-                "以經解經：針對關鍵詞或概念，我是否使用了其他經文來解釋，而非僅靠個人見解？",
-                "基督中心：這段經文如何指向或見證基督？與福音的核心有何關聯？",
-                "核心教義提煉：這段經文清晰傳達的一個主要真理是什麼？它屬於哪個基本教義範疇？",
-                "生活處境辨認：經文揭示的人性光景、需要或問題，與當代會眾的生命處境有何共通之處？",
-                "開場：從「他們的世界」開始：我的開場是否從一個會眾共鳴的故事、文化現象或普遍困惑切入？",
-                "結構組塊化（3點為宜）：我將信息分成幾個清晰、易記的模組？",
-                "漸進式啟示：每個部分是否遵循「展示經文 → 解釋真意 → 今日應用」的邏輯？",
-                "認知休息點：我是否在每部分之間，設計了見證故事、簡短影音或反思問題？",
-                "強力結尾：呼召與應許：我的結尾是否清晰呼召會眾作出具體回應，並指向神的應許與恩典？",
-                "聖經比喻現代化：我是否找到一個當代類比，來闡明經文中的古老比喻或概念？",
-                "視覺與多媒體：我使用的視覺輔助是否能強化真理印象，而非分散注意力？",
-                "互動與體驗設計：我是否設計了簡單的會眾參與方式？",
-                "情感真實性：我分享的見證或應用，是否發自內心，並能真誠地傳遞對神恩典的敬畏、喜樂或盼望？"
-            ];
-            
-            // 添加第一階段（問題1-5）
-            wordContent += `<div class="phase-title">${phaseTitles[0]}</div>`;
-            
-            for (let i = 0; i < 5; i++) {
-                wordContent += `
-                <div class="question-block">
-                    <div class="question-text"><span class="question-number">${i+1}.</span> ${questions[i]}</div>
-                    <div class="answer-area">${data.notes[i] ? data.notes[i].value.replace(/\n/g, '<br>') : ''}</div>
-                </div>`;
-            }
-            
-            // 添加第二階段（問題6-10）
-            wordContent += `<div class="phase-title">${phaseTitles[1]}</div>`;
-            
-            for (let i = 5; i < 10; i++) {
-                wordContent += `
-                <div class="question-block">
-                    <div class="question-text"><span class="question-number">${i+1}.</span> ${questions[i]}</div>
-                    <div class="answer-area">${data.notes[i] ? data.notes[i].value.replace(/\n/g, '<br>') : ''}</div>
-                </div>`;
-            }
-            
-            // 添加第三階段（問題11-14）
-            wordContent += `<div class="phase-title">${phaseTitles[2]}</div>`;
-            
-            for (let i = 10; i < 14; i++) {
-                wordContent += `
-                <div class="question-block">
-                    <div class="question-text"><span class="question-number">${i+1}.</span> ${questions[i]}</div>
-                    <div class="answer-area">${data.notes[i] ? data.notes[i].value.replace(/\n/g, '<br>') : ''}</div>
-                </div>`;
-            }
-            
-            // 添加禱告檢視部分
-            wordContent += `
-                <div class="prayer-section">
-                    <h3>最後的禱告檢視</h3>
-                    <div class="prayer-text">
-                        「主啊，這篇道：<br><br>
-                        - 是否<strong>忠於你的話語</strong>？（第一階段）<br>
-                        - 是否<strong>顧念羊群的需要與理解</strong>？（第二、三階段）<br>
-                        - 是否<strong>倚靠並榮耀你的靈</strong>？（禱告檢視）<br><br>
-                        願我不是單傳遞知識，而是<strong>見證你的生命</strong>；不只建造頭腦，更是<strong>觸動心靈，喚醒意志</strong>。奉主耶穌的名求，阿們。」
-                    </div>
-                    
-                    <div class="prayer-checkbox-section">
-                        <h4>禱告檢視項目：</h4>`;
-            
-            // 禱告檢視項目
-            const prayerQuestions = [
-                "信息已內化：這篇道先對我自己說話，能自然講述核心內容",
-                "已為會眾提名禱告：為會眾具體需要和反應禱告",
-                "恩典導向：強調「神為你成就」而非「你當做什麼」",
-                "預留聖靈空間：讓聖靈在現場自由運行與引導"
-            ];
-            
-            const prayerKeys = ['check1', 'check2', 'check3', 'check4'];
-            for (let i = 0; i < prayerQuestions.length; i++) {
-                const isChecked = data.prayerChecks[prayerKeys[i]];
-                wordContent += `
-                <div class="prayer-checkbox-item ${isChecked ? 'checked' : ''}">
-                    ${prayerQuestions[i]}
-                </div>`;
-            }
-            
-            wordContent += `
-                    </div>
-                </div>
-                
-                <div class="footer">
-                    <p>講章準備檢核表<br>
-                    匯出時間：${new Date().toLocaleString('zh-TW')}</p>
-                </div>
-            </body>
-            </html>`;
-            
-            // 創建Blob對象
-            const blob = new Blob(['\ufeff', wordContent], {
-                type: 'application/msword'
-            });
-            
-            // 創建下載連結
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            
-            // 生成文件名
-            const fileName = `北宣證道準備檢核表_${data.preacherName || '講員'}_${data.sermonDate || new Date().toISOString().slice(0, 10)}.doc`;
-            a.download = fileName;
-            
-            // 觸發下載
-            document.body.appendChild(a);
-            a.click();
-            
-            // 清理
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }, 100);
-            
-            showNotification('Word文件已開始下載！', 'success');
-        }
-        
-        // 重置所有數據
-        function resetAllData() {
-            if (confirm('確定要重置所有內容嗎？這將清除所有已填寫的資料。')) {
-                // 清除表單
-                document.getElementById('sermonTopic').value = '';
-                document.getElementById('targetAudience').value = '主日會眾';
-                document.getElementById('coreTruth').value = '';
-                document.getElementById('preacherName').value = '';
-                const today = new Date();
-                const todayFormatted = today.toISOString().split('T')[0];
-                document.getElementById('sermonDate').value = todayFormatted;
-                
-                // 清除所有筆記（第一、二、三階段）
-                const noteTextareas = document.querySelectorAll('.notes-area');
-                noteTextareas.forEach(textarea => {
-                    textarea.value = '';
-                });
-                
-                // 清除所有checkbox
-                const checkboxes = document.querySelectorAll('.prayer-checkbox');
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                
-                // 清除本地存儲
-                localStorage.removeItem('sermonChecklistData');
-                
-                // 更新完成度
-                updateCompletionStatus();
-                
-                showNotification('所有內容已重置！', 'info');
+
+        // 新增：清除所有存檔功能
+        function clearAllSessions() {
+            if (confirm("警告：這將刪除「所有」歷史存檔，且無法復原。\n\n確定要全部清除嗎？")) {
+                localStorage.removeItem('sermonSessions');
+                localStorage.removeItem('currentSessionId');
+                sessions = [];
+                createNewSession(); // 重建一個空白的
+                showToast("已清除所有歷史存檔");
             }
         }
-        
-        // 頁面加載時檢查是否有保存的數據
-        function loadSavedData() {
-            const savedData = localStorage.getItem('sermonChecklistData');
-            
-            if (savedData) {
-                try {
-                    const data = JSON.parse(savedData);
-                    
-                    // 載入基本信息
-                    document.getElementById('sermonTopic').value = data.sermonTopic || '';
-                    document.getElementById('targetAudience').value = data.targetAudience || '主日會眾';
-                    document.getElementById('coreTruth').value = data.coreTruth || '';
-                    document.getElementById('preacherName').value = data.preacherName || '';
-                    document.getElementById('sermonDate').value = data.sermonDate || '';
-                    
-                    // 載入筆記（第一、二、三階段）
-                    if (data.notes && data.notes.length > 0) {
-                        const noteTextareas = document.querySelectorAll('.notes-area');
-                        data.notes.forEach((note, index) => {
-                            if (noteTextareas[index]) {
-                                noteTextareas[index].value = note.value || '';
-                            }
-                        });
+
+        function deleteSession(id, event) {
+            event.stopPropagation();
+            if (confirm("確定要刪除這個講道計畫嗎？")) {
+                sessions = sessions.filter(s => s.id !== id);
+                saveSessions();
+                if (currentSessionId === id) {
+                    if (sessions.length > 0) {
+                        currentSessionId = sessions[0].id;
+                        loadSession(currentSessionId);
+                    } else {
+                        createNewSession();
                     }
-                    
-                    // 載入禱告檢視數據（處理舊版本和新版本）
-                    if (data.prayerChecks) {
-                        document.getElementById('prayer-check1').checked = data.prayerChecks.check1 || false;
-                        document.getElementById('prayer-check2').checked = data.prayerChecks.check2 || false;
-                        document.getElementById('prayer-check3').checked = data.prayerChecks.check3 || false;
-                        document.getElementById('prayer-check4').checked = data.prayerChecks.check4 || false;
-                    } else if (data.phase4) {
-                        // 舊版本兼容：如果存在舊的phase4數據，映射到新的prayerChecks
-                        document.getElementById('prayer-check1').checked = data.phase4.check15 || false;
-                        document.getElementById('prayer-check2').checked = data.phase4.check16 || false;
-                        document.getElementById('prayer-check3').checked = data.phase4.check17 || false;
-                        document.getElementById('prayer-check4').checked = data.phase4.check18 || false;
-                    }
-                    
-                    // 更新完成度
-                    updateCompletionStatus();
-                } catch (e) {
-                    console.error('載入保存數據時出錯:', e);
+                } else {
+                    renderSessionList();
                 }
+                showToast("存檔已刪除");
             }
+        }
+
+        function renderSessionList() {
+            const list = document.getElementById('session-list');
+            list.innerHTML = `<div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">歷史存檔</div>` + 
+                sessions.map(s => `
+                <div onclick="loadSession('${s.id}')" class="sidebar-item group flex justify-between items-center p-3 rounded-xl cursor-pointer transition-all ${s.id === currentSessionId ? 'active shadow-sm' : 'hover:bg-slate-50'}">
+                    <div class="truncate pr-2 flex-1">
+                        <div class="text-sm font-bold truncate">${s.title || '未命名講道'}</div>
+                        <div class="text-[10px] text-slate-400">${new Date(parseInt(s.id.split('_')[1])).toLocaleDateString()}</div>
+                    </div>
+                    <button onclick="deleteSession('${s.id}', event)" class="opacity-0 group-hover:opacity-100 p-1.5 text-rose-300 hover:text-rose-600 hover:bg-rose-100 rounded-md transition-all">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function loadSession(id) {
+            if (!id) return;
+            currentSessionId = id;
+            const s = sessions.find(x => x.id === id);
+            if (!s) return;
+
+            document.getElementById('sermon-topic').value = s.topic || '';
+            document.getElementById('note-text-1').value = s.note1 || '';
+            document.getElementById('note-text-2').value = s.note2 || '';
+            document.getElementById('note-text-3').value = s.note3 || '';
+
+            [1, 2, 3].forEach(step => {
+                checklistItems[step].forEach((_, idx) => {
+                    const cb = document.getElementById(`check-${step}-${idx}`);
+                    cb.checked = (s.checks && s.checks[`${step}-${idx}`]) || false;
+                });
+            });
+            
+            localStorage.setItem('currentSessionId', id);
+            renderSessionList();
+        }
+
+        function updateCurrentSessionTitle() {
+            const topic = document.getElementById('sermon-topic').value;
+            const s = sessions.find(x => x.id === currentSessionId);
+            if (s) {
+                s.title = topic || "未命名講道";
+                s.topic = topic;
+                renderSessionList();
+            }
+            saveAllData();
+        }
+
+        function resetCurrentForm() {
+            if (confirm("這將清空目前頁面上的內容（筆記與勾選），確定嗎？")) {
+                document.getElementById('sermon-topic').value = '';
+                [1, 2, 3].forEach(step => {
+                    document.getElementById(`note-text-${step}`).value = '';
+                    checklistItems[step].forEach((_, idx) => {
+                        document.getElementById(`check-${step}-${idx}`).checked = false;
+                    });
+                });
+                updateCurrentSessionTitle();
+                saveAllData();
+                showToast("目前表單已清空");
+            }
+        }
+
+        function saveAllData() {
+            const s = sessions.find(x => x.id === currentSessionId);
+            if (!s) return;
+
+            s.topic = document.getElementById('sermon-topic').value;
+            s.note1 = document.getElementById('note-text-1').value;
+            s.note2 = document.getElementById('note-text-2').value;
+            s.note3 = document.getElementById('note-text-3').value;
+
+            if (!s.checks) s.checks = {};
+            [1, 2, 3].forEach(step => {
+                checklistItems[step].forEach((_, idx) => {
+                    s.checks[`${step}-${idx}`] = document.getElementById(`check-${step}-${idx}`).checked;
+                });
+            });
+
+            saveSessions();
+        }
+
+        function saveSessions() {
+            localStorage.setItem('sermonSessions', JSON.stringify(sessions));
+        }
+
+        function copyNotesOnly() {
+            const topic = document.getElementById('sermon-topic').value || "未命名主題";
+            const note1 = document.getElementById('note-text-1').value;
+            const note2 = document.getElementById('note-text-2').value;
+            const note3 = document.getElementById('note-text-3').value;
+
+            let text = `【講道主題與經文】\n${topic}\n\n`;
+            if (note1) text += `--- 準備筆記 ---\n${note1}\n\n`;
+            if (note2) text += `--- 正文筆記 ---\n${note2}\n\n`;
+            if (note3) text += `--- 潤飾筆記 ---\n${note3}\n\n`;
+
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast("筆記內容已複製！");
+        }
+
+        function startVoice(id) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("瀏覽器不支援語音辨識");
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'zh-TW';
+            const micIcon = document.getElementById(`mic-${id}`);
+            recognition.onstart = () => micIcon.classList.add('recording');
+            recognition.onend = () => micIcon.classList.remove('recording');
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                const textarea = document.getElementById(`note-text-${id}`);
+                textarea.value += (textarea.value ? ' ' : '') + text;
+                saveAllData();
+            };
+            recognition.start();
+        }
+
+        function toggleNote(id) {
+            document.getElementById(`note-${id}`).classList.toggle('active');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            t.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translate(-50%, 1rem)';
+            }, 2000);
+        }
+
+        function exportToWord() {
+            const topic = document.getElementById('sermon-topic').value || "未命名講道";
+            const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'><style>body{font-family:Arial;color:#000;} h1{text-align:center;} .note{border:1px solid #000;padding:10px;margin-top:5px;}</style></head><body>`;
+            
+            let body = `<h1>講道準備：${topic}</h1>`;
+            [1, 2, 3].forEach(step => {
+                const titles = ["Step 1: 準備 - 經文查考", "Step 2: 正文 - 認知設計", "Step 3: 潤飾 - 感官與情感"];
+                body += `<h3>${titles[step-1]}</h3><div class="note"><strong>筆記：</strong><br>${document.getElementById(`note-text-${step}`).value.replace(/\n/g, '<br>')}</div>`;
+            });
+
+            const blob = new Blob(['\ufeff', header + body + "</body></html>"], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `講道筆記_${topic}.doc`;
+            link.click();
         }
     </script>
 </body>
