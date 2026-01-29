@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>講道準備工作站 - 專業版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; scroll-behavior: smooth; }
+        
+        .note-area {
+            transition: all 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .note-area.active {
+            max-height: 800px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+        
+        .checkbox-custom:checked + label {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        .sidebar-item.active {
+            background-color: #f1f5f9;
+            border-left: 4px solid #4f46e5;
+        }
+
+        /* 側邊欄過渡 */
+        #sidebar {
+            transition: width 0.3s ease-in-out, opacity 0.2s;
+            width: 256px; /* 64 * 4px */
+        }
+        .sidebar-collapsed {
+            width: 0 !important;
+            opacity: 0;
+            overflow: hidden;
+            border-right: none !important;
+        }
+
+        /* 語音動畫 */
+        @keyframes pulse-red {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .recording { animation: pulse-red 1.5s infinite; color: #ef4444 !important; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
+
+    <!-- 1. 側邊導航欄 (預設收起狀態) -->
+    <aside id="sidebar" class="bg-white border-r border-slate-200 flex flex-col hidden md:flex relative z-10 sidebar-collapsed">
+        <div class="p-6 border-b border-slate-50 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-indigo-600 flex items-center gap-2">
+                <i data-lucide="layout"></i> 工作站
+            </h2>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-4 space-y-2" id="session-list">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">歷史存檔</div>
+        </div>
+
+        <div class="p-4 border-t border-slate-100 space-y-2">
+            <button onclick="createNewSession()" class="w-full flex items-center justify-center gap-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-2 rounded-lg font-medium transition-colors">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> 新講道計畫
+            </button>
+            <button onclick="clearAllSessions()" class="w-full flex items-center justify-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-600 py-2 rounded-lg font-medium transition-colors text-sm">
+                <i data-lucide="trash-2" class="w-4 h-4"></i> 全部清除
+            </button>
+        </div>
+    </aside>
+
+    <!-- 主內容區 -->
+    <main class="flex-1 overflow-y-auto relative">
+        <!-- 側邊欄切換按鈕 -->
+        <button onclick="toggleSidebar()" class="fixed left-4 top-4 z-20 p-2 bg-white rounded-full shadow-lg border border-slate-200 text-slate-500 hover:text-indigo-600 transition-all">
+            <i data-lucide="menu" id="sidebar-icon"></i>
+        </button>
+
+        <div class="max-w-4xl mx-auto p-6 md:p-12">
+            <!-- 標題與主題 -->
+            <header class="mb-10 text-center md:text-left">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <h1 class="text-3xl font-bold ml-0 md:ml-12">講道準備檢核</h1>
+                    <div class="flex gap-3">
+                        <button onclick="resetCurrentForm()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-all border border-transparent hover:border-rose-100">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> 重置目前表單
+                        </button>
+                        <button onclick="copyNotesOnly()" class="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg font-medium hover:bg-indigo-100 transition-all" title="只複製筆記內容">
+                            <i data-lucide="copy" class="w-4 h-4"></i> 複製筆記
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
+                    <!-- 更新：標籤名稱與 Placeholder -->
+                    <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">主題和經文</label>
+                    <input type="text" id="sermon-topic" oninput="updateCurrentSessionTitle()" placeholder="輸入本次講道的主題與經文..." 
+                        class="w-full bg-transparent text-2xl font-bold outline-none border-none placeholder:text-slate-300">
+                </div>
+            </header>
+
+            <!-- 檢核階段 -->
+            <div class="space-y-6">
+                <!-- Step 1 -->
+                <section class="stage-container">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-blue-100 transition-all">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                            <div class="p-3 rounded-xl bg-blue-500 text-white shadow-md">
+                                <i data-lucide="book-open" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Step 1: 準備</span>
+                                <h2 class="text-xl font-bold text-blue-600">經文查考</h2>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="toggleNote(1)" class="p-2 hover:bg-slate-50 rounded-lg text-slate-400"><i data-lucide="message-square"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-2" id="checklist-1"></div>
+                        <div id="note-1" class="note-area active"> 
+                            <div class="relative">
+                                <textarea id="note-text-1" oninput="saveAllData()" placeholder="第一階段靈感筆記..." class="w-full p-4 rounded-xl border border-blue-50 bg-blue-50/30 focus:bg-white focus:ring-2 focus:ring-blue-400 outline-none h-40 transition-all"></textarea>
+                                <button onclick="startVoice(1)" class="absolute bottom-4 right-4 p-2 bg-white rounded-full shadow-md text-slate-400 hover:text-red-500 transition-all">
+                                    <i data-lucide="mic" id="mic-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 2 -->
+                <section class="stage-container">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100 transition-all">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                            <div class="p-3 rounded-xl bg-emerald-500 text-white shadow-md">
+                                <i data-lucide="brain" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Step 2: 正文</span>
+                                <h2 class="text-xl font-bold text-emerald-600">認知設計</h2>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="toggleNote(2)" class="p-2 hover:bg-slate-50 rounded-lg text-slate-400"><i data-lucide="message-square"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="checklist-2"></div>
+                        <div id="note-2" class="note-area active">
+                            <div class="relative">
+                                <textarea id="note-text-2" oninput="saveAllData()" placeholder="第二階段邏輯筆記..." class="w-full p-4 rounded-xl border border-emerald-50 bg-emerald-50/30 focus:bg-white focus:ring-2 focus:ring-emerald-400 outline-none h-40 transition-all"></textarea>
+                                <button onclick="startVoice(2)" class="absolute bottom-4 right-4 p-2 bg-white rounded-full shadow-md text-slate-400 hover:text-red-500 transition-all">
+                                    <i data-lucide="mic" id="mic-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 3 -->
+                <section class="stage-container">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-rose-100 transition-all">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                            <div class="p-3 rounded-xl bg-rose-500 text-white shadow-md">
+                                <i data-lucide="heart" class="w-6 h-6"></i>
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Step 3: 潤飾</span>
+                                <h2 class="text-xl font-bold text-rose-600">感官與情感</h2>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="toggleNote(3)" class="p-2 hover:bg-slate-50 rounded-lg text-slate-400"><i data-lucide="message-square"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="checklist-3"></div>
+                        <div id="note-3" class="note-area active">
+                            <div class="relative">
+                                <textarea id="note-text-3" oninput="saveAllData()" placeholder="第三階段情感筆記..." class="w-full p-4 rounded-xl border border-rose-50 bg-rose-50/30 focus:bg-white focus:ring-2 focus:ring-rose-400 outline-none h-40 transition-all"></textarea>
+                                <button onclick="startVoice(3)" class="absolute bottom-4 right-4 p-2 bg-white rounded-full shadow-md text-slate-400 hover:text-red-500 transition-all">
+                                    <i data-lucide="mic" id="mic-3"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 操作區 -->
+            <div class="mt-12 flex flex-col sm:flex-row justify-center gap-4 pb-20">
+                <button onclick="saveAllData()" class="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold shadow-xl transition-all active:scale-95">
+                    <i data-lucide="save"></i> 儲存計畫
+                </button>
+                <button onclick="exportToWord()" class="flex items-center justify-center gap-2 bg-white border border-slate-200 hover:border-indigo-600 hover:text-indigo-600 px-8 py-4 rounded-2xl font-bold shadow-sm transition-all active:scale-95">
+                    <i data-lucide="file-text"></i> 輸出 Word (.doc)
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 提示彈窗 -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-3 rounded-2xl shadow-2xl opacity-0 transition-all pointer-events-none transform translate-y-4">
+        已完成操作
+    </div>
+
+    <script>
+        const checklistItems = {
+            1: ["上下文檢視", "以經解經", "基督中心", "核心教義", "生活處境"],
+            2: ["引入", "結構組塊", "漸進啟發", "認知休息點", "生活實踐"],
+            3: ["比喻現代化", "視覺與多媒體", "互動與體驗", "情感真實性"]
+        };
+
+        let sessions = JSON.parse(localStorage.getItem('sermonSessions')) || [];
+        let currentSessionId = localStorage.getItem('currentSessionId') || null;
+
+        window.onload = () => {
+            renderChecklists();
+            if (sessions.length === 0) {
+                createNewSession();
+            } else {
+                renderSessionList();
+                loadSession(currentSessionId || sessions[0].id);
+            }
+            lucide.createIcons();
+        };
+
+        function renderChecklists() {
+            [1, 2, 3].forEach(step => {
+                const container = document.getElementById(`checklist-${step}`);
+                container.innerHTML = checklistItems[step].map((item, idx) => `
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors">
+                        <input type="checkbox" id="check-${step}-${idx}" class="checkbox-custom w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" onchange="saveAllData()">
+                        <label for="check-${step}-${idx}" class="text-sm font-medium cursor-pointer">${item}</label>
+                    </div>
+                `).join('');
+            });
+        }
+
+        // 側邊欄切換：優化圖示與動畫邏輯
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('sidebar-icon');
+            sidebar.classList.toggle('sidebar-collapsed');
+            
+            // 如果收起，顯示 menu；如果展開，顯示 x
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            icon.setAttribute('data-lucide', isCollapsed ? 'menu' : 'x');
+            lucide.createIcons();
+        }
+
+        function createNewSession() {
+            const id = 'session_' + Date.now();
+            const newSession = {
+                id: id,
+                title: "未命名講道",
+                topic: "",
+                checks: {},
+                note1: "", note2: "", note3: ""
+            };
+            sessions.unshift(newSession);
+            currentSessionId = id;
+            saveSessions();
+            renderSessionList();
+            loadSession(id);
+        }
+
+        // 新增：清除所有存檔功能
+        function clearAllSessions() {
+            if (confirm("警告：這將刪除「所有」歷史存檔，且無法復原。\n\n確定要全部清除嗎？")) {
+                localStorage.removeItem('sermonSessions');
+                localStorage.removeItem('currentSessionId');
+                sessions = [];
+                createNewSession(); // 重建一個空白的
+                showToast("已清除所有歷史存檔");
+            }
+        }
+
+        function deleteSession(id, event) {
+            event.stopPropagation();
+            if (confirm("確定要刪除這個講道計畫嗎？")) {
+                sessions = sessions.filter(s => s.id !== id);
+                saveSessions();
+                if (currentSessionId === id) {
+                    if (sessions.length > 0) {
+                        currentSessionId = sessions[0].id;
+                        loadSession(currentSessionId);
+                    } else {
+                        createNewSession();
+                    }
+                } else {
+                    renderSessionList();
+                }
+                showToast("存檔已刪除");
+            }
+        }
+
+        function renderSessionList() {
+            const list = document.getElementById('session-list');
+            list.innerHTML = `<div class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">歷史存檔</div>` + 
+                sessions.map(s => `
+                <div onclick="loadSession('${s.id}')" class="sidebar-item group flex justify-between items-center p-3 rounded-xl cursor-pointer transition-all ${s.id === currentSessionId ? 'active shadow-sm' : 'hover:bg-slate-50'}">
+                    <div class="truncate pr-2 flex-1">
+                        <div class="text-sm font-bold truncate">${s.title || '未命名講道'}</div>
+                        <div class="text-[10px] text-slate-400">${new Date(parseInt(s.id.split('_')[1])).toLocaleDateString()}</div>
+                    </div>
+                    <button onclick="deleteSession('${s.id}', event)" class="opacity-0 group-hover:opacity-100 p-1.5 text-rose-300 hover:text-rose-600 hover:bg-rose-100 rounded-md transition-all">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function loadSession(id) {
+            if (!id) return;
+            currentSessionId = id;
+            const s = sessions.find(x => x.id === id);
+            if (!s) return;
+
+            document.getElementById('sermon-topic').value = s.topic || '';
+            document.getElementById('note-text-1').value = s.note1 || '';
+            document.getElementById('note-text-2').value = s.note2 || '';
+            document.getElementById('note-text-3').value = s.note3 || '';
+
+            [1, 2, 3].forEach(step => {
+                checklistItems[step].forEach((_, idx) => {
+                    const cb = document.getElementById(`check-${step}-${idx}`);
+                    cb.checked = (s.checks && s.checks[`${step}-${idx}`]) || false;
+                });
+            });
+            
+            localStorage.setItem('currentSessionId', id);
+            renderSessionList();
+        }
+
+        function updateCurrentSessionTitle() {
+            const topic = document.getElementById('sermon-topic').value;
+            const s = sessions.find(x => x.id === currentSessionId);
+            if (s) {
+                s.title = topic || "未命名講道";
+                s.topic = topic;
+                renderSessionList();
+            }
+            saveAllData();
+        }
+
+        function resetCurrentForm() {
+            if (confirm("這將清空目前頁面上的內容（筆記與勾選），確定嗎？")) {
+                document.getElementById('sermon-topic').value = '';
+                [1, 2, 3].forEach(step => {
+                    document.getElementById(`note-text-${step}`).value = '';
+                    checklistItems[step].forEach((_, idx) => {
+                        document.getElementById(`check-${step}-${idx}`).checked = false;
+                    });
+                });
+                updateCurrentSessionTitle();
+                saveAllData();
+                showToast("目前表單已清空");
+            }
+        }
+
+        function saveAllData() {
+            const s = sessions.find(x => x.id === currentSessionId);
+            if (!s) return;
+
+            s.topic = document.getElementById('sermon-topic').value;
+            s.note1 = document.getElementById('note-text-1').value;
+            s.note2 = document.getElementById('note-text-2').value;
+            s.note3 = document.getElementById('note-text-3').value;
+
+            if (!s.checks) s.checks = {};
+            [1, 2, 3].forEach(step => {
+                checklistItems[step].forEach((_, idx) => {
+                    s.checks[`${step}-${idx}`] = document.getElementById(`check-${step}-${idx}`).checked;
+                });
+            });
+
+            saveSessions();
+        }
+
+        function saveSessions() {
+            localStorage.setItem('sermonSessions', JSON.stringify(sessions));
+        }
+
+        function copyNotesOnly() {
+            const topic = document.getElementById('sermon-topic').value || "未命名主題";
+            const note1 = document.getElementById('note-text-1').value;
+            const note2 = document.getElementById('note-text-2').value;
+            const note3 = document.getElementById('note-text-3').value;
+
+            let text = `【講道主題與經文】\n${topic}\n\n`;
+            if (note1) text += `--- 準備筆記 ---\n${note1}\n\n`;
+            if (note2) text += `--- 正文筆記 ---\n${note2}\n\n`;
+            if (note3) text += `--- 潤飾筆記 ---\n${note3}\n\n`;
+
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast("筆記內容已複製！");
+        }
+
+        function startVoice(id) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("瀏覽器不支援語音辨識");
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'zh-TW';
+            const micIcon = document.getElementById(`mic-${id}`);
+            recognition.onstart = () => micIcon.classList.add('recording');
+            recognition.onend = () => micIcon.classList.remove('recording');
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                const textarea = document.getElementById(`note-text-${id}`);
+                textarea.value += (textarea.value ? ' ' : '') + text;
+                saveAllData();
+            };
+            recognition.start();
+        }
+
+        function toggleNote(id) {
+            document.getElementById(`note-${id}`).classList.toggle('active');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            t.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translate(-50%, 1rem)';
+            }, 2000);
+        }
+
+        function exportToWord() {
+            const topic = document.getElementById('sermon-topic').value || "未命名講道";
+            const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'><style>body{font-family:Arial;color:#000;} h1{text-align:center;} .note{border:1px solid #000;padding:10px;margin-top:5px;}</style></head><body>`;
+            
+            let body = `<h1>講道準備：${topic}</h1>`;
+            [1, 2, 3].forEach(step => {
+                const titles = ["Step 1: 準備 - 經文查考", "Step 2: 正文 - 認知設計", "Step 3: 潤飾 - 感官與情感"];
+                body += `<h3>${titles[step-1]}</h3><div class="note"><strong>筆記：</strong><br>${document.getElementById(`note-text-${step}`).value.replace(/\n/g, '<br>')}</div>`;
+            });
+
+            const blob = new Blob(['\ufeff', header + body + "</body></html>"], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `講道筆記_${topic}.doc`;
+            link.click();
+        }
+    </script>
+</body>
+</html>
